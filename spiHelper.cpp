@@ -12,7 +12,7 @@ void setupSpiForTMC()
 
 void sendSpiDataToTMC(unsigned long address, unsigned long datagram, int csPin, bool sendSerial)
 {
-  delay(100);
+//  delay(100);
   uint8_t stat;
   unsigned long data;
 

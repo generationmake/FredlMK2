@@ -24,11 +24,11 @@ void TMC5130::begin()
   sendSpiDataToTMC(TMC5130_TPWMTHRS|0x80, 0x000001F4, csPin, true); //write TPWM_THRS=500
 //  sendSpiDataToTMC(0xF0, 0x00000000, csPin, true); //write PWMCONF
   sendSpiDataToTMC(0xF0, 0x000401C8, csPin, true); //write PWMCONF
-  sendSpiDataToTMC(TMC5130_A1|0x80, 0x000003E8, csPin, true);  // write acceleration, was 0x03e8=1000
-//  sendSpiDataToTMC(TMC5130_A1|0x80, 0x00000020, csPin, true);  // acceleration, was 0x03e8=1000
+//  sendSpiDataToTMC(TMC5130_A1|0x80, 0x000003E8, csPin, true);  // write acceleration, was 0x03e8=1000
+  sendSpiDataToTMC(TMC5130_A1|0x80, 500, csPin, true);  // acceleration, was 0x03e8=1000
   sendSpiDataToTMC(TMC5130_V1|0x80, 0x000186A0, csPin, true);  //write V1
-  sendSpiDataToTMC(TMC5130_AMAX|0x80, 0x00001338, csPin, true);  //write acceleration max=5000
-//  sendSpiDataToTMC(TMC5130_AMAX|0x80, 0x0000C350, csPin, true);  //write acceleration max, was 0xC350=50000
+//  sendSpiDataToTMC(TMC5130_AMAX|0x80, 0x00001338, csPin, true);  //write acceleration max=5000
+  sendSpiDataToTMC(TMC5130_AMAX|0x80, 2000, csPin, true);  //write acceleration max, was 0xC350=50000
 //  sendSpiDataToTMC(TMC5130_AMAX|0x80, 0x00000100, csPin, true);  // acceleration max, was 0xC350=50000
 //  sendSpiDataToTMC(TMC5130_VMAX|0x80, 0x000186A0, csPin, true);  //write VMAX
   sendSpiDataToTMC(TMC5130_DMAX|0x80, 0x000002BC, csPin, true);  //write DMAX=700
