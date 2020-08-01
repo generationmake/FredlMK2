@@ -15,19 +15,6 @@ TMC5130 tmc2(4); // stepper 2
 
 VidorCamera vcam;
 
-//#define MAXDIM 10
-
-//static uint16_t x[QR_PT_DET_NUM], y[QR_PT_DET_NUM];
-
-//struct qrPtn {
-//  uint16_t x[QR_PT_DET_NUM];
-//  uint16_t y[QR_PT_DET_NUM];
-//};
-
-//static qrPtn qrBufferPtn[MAXDIM];
-
-//uint16_t count = 0, last;
-
 //returns the input voltage
 float inputvoltage(void)
 {
@@ -77,10 +64,8 @@ void setup() {
   digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
 }
-
-void loop() {
-//  Serial.print("input voltage: ");    
-//  Serial.println(inputvoltage());    
+int check_qrcode(void)
+{
   int validcounter=0;
   static int qrrecognized=0;
 
@@ -88,31 +73,24 @@ void loop() {
      qrrec.readQRCode(); get, if available, the coordinates of the QR code in the screen
   */
   vcam.qrrec.readQRCode();
-//  Serial.print("QR_PT_DET_NUM: ");    
-//  Serial.println(QR_PT_DET_NUM);    
   for (int i = 0; i < QR_PT_DET_NUM; i++) {
     if (vcam.qrrec.qr.pt[i].valid) {
       validcounter++;
-//  Serial.println("valid");    
-//      x[i] = (vcam.qrrec.qr.pt[i].xs + vcam.qrrec.qr.pt[i].xe) / 2;
-//      y[i] = (vcam.qrrec.qr.pt[i].ys + vcam.qrrec.qr.pt[i].ye) / 2;
-//      vcam.vgfx.Cross(x[i], y[i], 65535);
-
     }
   }
 
-//  last = count % MAXDIM;
-//  for (int i = 0; i < QR_PT_DET_NUM; i++) {
-//    vcam.vgfx.Cross(qrBufferPtn[last].x[i], qrBufferPtn[last].y[i], 0, 0);
-//    qrBufferPtn[last].x[i] = x[i];
-//    qrBufferPtn[last].y[i] = y[i];
-//  }
-//  count++;
   Serial.println(validcounter);
   if(validcounter>2) qrrecognized++;
   else qrrecognized=0;
-  if(qrrecognized>2) Serial.println("QR code recognized!!!");
-  delay(30);    
+  if(qrrecognized>2) return 1;
+  else return 0;
+}
+
+void loop() {
+  Serial.print("input voltage: ");    
+  Serial.println(inputvoltage());    
+  if(check_qrcode()) Serial.println("QR code recognized!!!");
+  delay(100);    
 
 /*  if(emergencybutton())
   {
