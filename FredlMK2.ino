@@ -43,7 +43,7 @@ void setup() {
   Serial.begin(115200);
   pinMode(EMERGENCYSTOP,  INPUT_PULLDOWN);   // set EMERGENCYSTOP pin to input with pull down
   pinMode(BARRELSWITCH,  INPUT_PULLUP);   // set BARRELSWITCH pin to input with pull down
-  delay(4000);
+  delay(1000);
 
   sonar.begin();
   sonar.startAutoread();
@@ -63,7 +63,7 @@ void setup() {
       qrrec.begin(); enable the QR code recognition
   */
   vcam.qrrec.begin();
-  delay(4000);
+  delay(1000);
   Serial.println("Power ON");
   
   pinMode(LED_BUILTIN, OUTPUT);
@@ -96,7 +96,7 @@ int check_qrcode(void)
   Serial.println(validcounter);
   if(validcounter>2) qrrecognized++;
   else qrrecognized=0;
-  if(qrrecognized>2) return 1;
+  if(qrrecognized>1) return 1;
   else return 0;
 }
 void drive(void)
@@ -112,8 +112,8 @@ void drive(void)
 //    digitalWrite(LED_BUILTIN, LOW);
     tmc1.readtstep(); // read tstep
     tmc2.readtstep(); // read tstep
-    tmc1.speed(30000,0); // should be one turn with 1.8 degrees and 256 micro steps
-    tmc2.speed(30000,1); // should be one turn with 1.8 degrees and 256 micro steps
+    tmc1.speed(53000,0); // should be one turn with 1.8 degrees and 256 micro steps
+    tmc2.speed(50000,1); // should be one turn with 1.8 degrees and 256 micro steps
     digitalWrite(LED_BUILTIN, LOW);
     tmc1.readtstep(); // read tstep
     tmc2.readtstep(); // read tstep
@@ -133,6 +133,7 @@ void loop() {
   static int state=0;
   static int count=0;
   int distance=0;
+  static int olddistance=0;
 
   Serial.print("input voltage: ");    
   Serial.println(inputvoltage());    
@@ -154,7 +155,8 @@ void loop() {
 
   if(state==0)  // wait for QR code
   {
-    if(check_qrcode())
+    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN)); // toggle led 
+    if(check_qrcode()||(count>30))
     {
       Serial.println("QR code recognized!!!");
       state=1;  // go to next state
@@ -163,12 +165,17 @@ void loop() {
   }
   else if(state==1)  // drive
   {
-    drive();
-    if(count>20)
+    digitalWrite(LED_BUILTIN, LOW); // turn led on
+    if(distance>25)
     {
-      state=2;  // go to next state
-      count=0;  // reset counter
+      drive();
+      if(count>20)
+      {
+        state=2;  // go to next state
+        count=0;  // reset counter
+      }      
     }
+    else stop();
   }
   else if(state==2)  // wait for barrel
   {
@@ -192,9 +199,11 @@ void loop() {
   }
   else if(state==4)  // drive forever
   {
-    drive();
+    if((distance<25)&&(olddistance<35)) stop();
+    else drive();
   }
-  delay(100);
+  delay(70);
   count++;    
+  olddistance=distance;
 
 }
