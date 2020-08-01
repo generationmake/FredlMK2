@@ -1,4 +1,5 @@
 #include "tmc5130.h"
+#include "SonarExtenderI2C.h"
 
 // for Arduino MKR WiFi 1010 (on adapter)
 TMC5130 tmc1(5); // stepper 1
@@ -15,6 +16,9 @@ TMC5130 tmc2(4); // stepper 2
 #include "VidorCamera.h"
 
 VidorCamera vcam;
+
+SonarExtenderI2C sonar;
+
 
 //returns the input voltage
 float inputvoltage(void)
@@ -41,6 +45,8 @@ void setup() {
   pinMode(BARRELSWITCH,  INPUT_PULLUP);   // set BARRELSWITCH pin to input with pull down
   delay(4000);
 
+  sonar.begin();
+  sonar.startAutoread();
   
   if (!FPGA.begin()) {
     Serial.println("Initialization failed!");
@@ -126,9 +132,15 @@ void stop(void)
 void loop() {
   static int state=0;
   static int count=0;
+  int distance=0;
 
   Serial.print("input voltage: ");    
   Serial.println(inputvoltage());    
+  sonar.read(0);
+  Serial.print("sonar distance: ");    
+  distance=sonar.getMeasurementCm(0);
+  Serial.println(distance);
+
   if(emergencybutton())
   {
     Serial.println("emergency button active");    
