@@ -9,6 +9,7 @@ TMC5130 tmc2(4); // stepper 2
 //TMC5130 tmc2(30); // stepper 2
 
 #define EMERGENCYSTOP A4
+#define BARRELSWITCH A1
 
 #include "VidorGraphics.h"
 #include "VidorCamera.h"
@@ -27,10 +28,17 @@ bool emergencybutton(void)
   return digitalRead(EMERGENCYSTOP);
 }
 
+//returns false if barrel is present
+bool barrelstate(void)
+{
+  return digitalRead(BARRELSWITCH);
+}
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   pinMode(EMERGENCYSTOP,  INPUT_PULLDOWN);   // set EMERGENCYSTOP pin to input with pull down
+  pinMode(BARRELSWITCH,  INPUT_PULLUP);   // set BARRELSWITCH pin to input with pull down
   delay(4000);
 
   
@@ -125,6 +133,10 @@ void loop() {
   {
     Serial.println("emergency button active");    
   }
+  if(!barrelstate())
+  {
+    Serial.println("barrel present");    
+  }
   Serial.print("state: ");    
   Serial.println(state);    
 
@@ -149,6 +161,26 @@ void loop() {
   else if(state==2)  // wait for barrel
   {
     stop();
+    digitalWrite(LED_BUILTIN, HIGH); // turn led off
+    if(!barrelstate())  // barrel loaded
+    {
+      state=3;  // go to next state
+      count=0;  // reset counter
+    }
+  }
+  else if(state==3)  // wait after barrel load
+  {
+    stop();
+    digitalWrite(LED_BUILTIN, LOW); // turn led on
+    if(count>20)
+    {
+      state=4;  // go to next state
+      count=0;  // reset counter
+    }    
+  }
+  else if(state==4)  // drive forever
+  {
+    drive();
   }
   delay(100);
   count++;    
