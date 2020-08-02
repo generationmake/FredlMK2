@@ -112,7 +112,7 @@ void drive(void)
 //    digitalWrite(LED_BUILTIN, LOW);
     tmc1.readtstep(); // read tstep
     tmc2.readtstep(); // read tstep
-    tmc1.speed(53000,0); // should be one turn with 1.8 degrees and 256 micro steps
+    tmc1.speed(52000,0); // should be one turn with 1.8 degrees and 256 micro steps
     tmc2.speed(50000,1); // should be one turn with 1.8 degrees and 256 micro steps
     digitalWrite(LED_BUILTIN, LOW);
     tmc1.readtstep(); // read tstep
@@ -169,7 +169,7 @@ void loop() {
     if(distance>25)
     {
       drive();
-      if(count>20)
+      if(count>20)  
       {
         state=2;  // go to next state
         count=0;  // reset counter

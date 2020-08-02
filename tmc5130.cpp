@@ -19,13 +19,13 @@ void TMC5130::begin()
 //  sendSpiDataToTMC(TMC5130_IHOLD_IRUN|0x80, 0x00070603, csPin, true); //write IHOLD_IRUN: IHOLD=3, IRUN=6, IHOLDDELAY=7 
 //  sendSpiDataToTMC(TMC5130_IHOLD_IRUN|0x80, 0x00061F0A, csPin, true); //write IHOLD_IRUN: IHOLD=10, IRUN=31, IHOLDDELAY=6 
 //  sendSpiDataToTMC(TMC5130_IHOLD_IRUN|0x80, 0x0006120A, csPin, true); //write IHOLD_IRUN: IHOLD=10, IRUN=18, IHOLDDELAY=6 
-  sendSpiDataToTMC(TMC5130_IHOLD_IRUN|0x80, 0x00061A05, csPin, true); //write IHOLD_IRUN: IHOLD=5, IRUN=26, IHOLDDELAY=6 
+  sendSpiDataToTMC(TMC5130_IHOLD_IRUN|0x80, 0x00061C08, csPin, true); //write IHOLD_IRUN: IHOLD=8, IRUN=28, IHOLDDELAY=6 
   sendSpiDataToTMC(TMC5130_TPOWERDOWN|0x80, 0x0000000A, csPin, true); //write TPOWERDOWN=10
   sendSpiDataToTMC(TMC5130_TPWMTHRS|0x80, 0x000001F4, csPin, true); //write TPWM_THRS=500
 //  sendSpiDataToTMC(0xF0, 0x00000000, csPin, true); //write PWMCONF
   sendSpiDataToTMC(0xF0, 0x000401C8, csPin, true); //write PWMCONF
 //  sendSpiDataToTMC(TMC5130_A1|0x80, 0x000003E8, csPin, true);  // write acceleration, was 0x03e8=1000
-  sendSpiDataToTMC(TMC5130_A1|0x80, 500, csPin, true);  // acceleration, was 0x03e8=1000
+  sendSpiDataToTMC(TMC5130_A1|0x80, 400, csPin, true);  // acceleration, was 0x03e8=1000
   sendSpiDataToTMC(TMC5130_V1|0x80, 0x000186A0, csPin, true);  //write V1
 //  sendSpiDataToTMC(TMC5130_AMAX|0x80, 0x00001338, csPin, true);  //write acceleration max=5000
   sendSpiDataToTMC(TMC5130_AMAX|0x80, 2000, csPin, true);  //write acceleration max, was 0xC350=50000
