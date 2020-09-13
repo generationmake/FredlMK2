@@ -113,8 +113,7 @@ void sample_screen(void)
 {
   DOG.clear();  //clear whole display
   DOG.string(0,0,UBUNTUMONO_B_8,"www.generationmake.de",ALIGN_CENTER);
-//  DOG.string(0,1,UBUNTUMONO_B_16,"EA DOGS102-6",ALIGN_CENTER,STYLE_FULL_INVERSE);
-  DOG.string(0,1,UBUNTUMONO_B_16,"EA DOGM128-6",ALIGN_CENTER,STYLE_FULL_INVERSE);
+  DOG.string(0,2,UBUNTUMONO_B_16,"Fredl MK2",ALIGN_CENTER,STYLE_FULL_INVERSE);
 }
 
 
@@ -146,6 +145,7 @@ void setup() {
   DOG.initialize(6,0,0,0,1,DOGM128);   //SS = 6, 0,0= use Hardware SPI, 0 = A0, 1 = RESET, EA DOGM128-6 (=128x64 dots)
   DOG.clear();  //clear whole display
   DOG.picture(0,0,logo,STYLE_INVERSE);
+  DOG.string(0,4,UBUNTUMONO_B_32,"FredlMK2",ALIGN_CENTER,STYLE_FULL);
 
   sonar.begin();
   sonar.startAutoread();
@@ -239,24 +239,39 @@ void loop() {
   static int count=0;
   int distance=0;
   static int olddistance=0;
+  char buffer[50];
 
   Serial.print("input voltage: ");    
   Serial.println(inputvoltage());    
+  DOG.string(0,6,UBUNTUMONO_B_16,itoa(inputvoltage(),buffer,10),ALIGN_RIGHT);  // display raw value of input voltage
   sonar.read(0);
   Serial.print("sonar distance: ");    
   distance=sonar.getMeasurementCm(0);
   Serial.println(distance);
+  DOG.string(0,4,UBUNTUMONO_B_16,itoa(count,buffer,10),ALIGN_CENTER, STYLE_FULL);  // display counter
+  DOG.string(0,4,UBUNTUMONO_B_16,itoa(distance,buffer,10),ALIGN_RIGHT);  // display raw value of distance
 
   if(emergencybutton())
   {
     Serial.println("emergency button active");    
+    DOG.string(0,4,UBUNTUMONO_B_16,"STOP",ALIGN_LEFT);  // display emergency button
   }
+  else DOG.string(0,4,UBUNTUMONO_B_16,"    ",ALIGN_LEFT);  // display emergency button
   if(!barrelstate())
   {
     Serial.println("barrel present");    
+    DOG.string(0,6,UBUNTUMONO_B_16,"barrel",ALIGN_LEFT);  // display barrel
   }
+  else DOG.string(0,6,UBUNTUMONO_B_16,"      ",ALIGN_LEFT);  // display barrel
   Serial.print("state: ");    
   Serial.println(state);    
+
+  if(state==0) DOG.string(0,0,UBUNTUMONO_B_16,"wait QR code",ALIGN_CENTER,STYLE_FULL);
+  else if(state==1) DOG.string(0,0,UBUNTUMONO_B_16,"drive",ALIGN_CENTER,STYLE_FULL);
+  else if(state==2) DOG.string(0,0,UBUNTUMONO_B_16,"wait for barrel",ALIGN_CENTER,STYLE_FULL);
+  else if(state==3) DOG.string(0,0,UBUNTUMONO_B_16,"wait after barrel",ALIGN_CENTER,STYLE_FULL);
+  else if(state==4) DOG.string(0,0,UBUNTUMONO_B_16,"drive",ALIGN_CENTER,STYLE_FULL);
+  else DOG.string(0,0,UBUNTUMONO_B_16,"undefined",ALIGN_CENTER,STYLE_FULL);
 
   if(state==0)  // wait for QR code
   {
